@@ -1,7 +1,7 @@
 <template>
  <div class="app-container">
       <div class="filter-container">
-         <el-input v-model="listQuery.phone" placeholder="手机号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+         <el-input v-model="listQuery.order_num" placeholder="订单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
          <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px;" icon="el-icon-search" @click="handleFilter">
            搜索
          </el-button>
@@ -23,53 +23,105 @@
          <span>{{ row.id }}</span>
        </template>
      </el-table-column>
-
-     <el-table-column label="昵称" align="center">
+     <el-table-column label="订单号" align="center"  width="180">
        <template slot-scope="{row}">
-         <span>{{ row.nickname}}</span>
+         <span>{{ row.order_num}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="手机号" align="center">
+     <el-table-column label="备注" align="center"  width="150">
        <template slot-scope="{row}">
-         <span>{{ row.phone}}</span>
+         <span>{{ row.comment}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="后台回复内容" align="center"  width="150">
+       <template slot-scope="{row}">
+         <span>{{ row.reply}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="发货人" align="center"  width="120">
+       <template slot-scope="{row}">
+         <span>{{ row.send_name}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="发货人联系方式" align="center"  width="150">
+       <template slot-scope="{row}">
+         <span>{{ row.send_phone}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="发货人地址" align="center"  width="200">
+       <template slot-scope="{row}">
+         <span>{{ row.send_address}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="发货人详细地址" align="center"  width="200">
+       <template slot-scope="{row}">
+         <span>{{ row.send_detailed_address}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="劳务费" align="center"  width="100">
+       <template slot-scope="{row}">
+         <span>{{ row.cost +'元'}}</span>
+       </template>
+     </el-table-column>
+
+     <el-table-column label="收货人" align="center"  width="150">
+       <template slot-scope="{row}">
+         <span>{{ row.get_name}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="收货人联系方式" align="center"  width="150">
+       <template slot-scope="{row}">
+         <span>{{ row.get_phone}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="收货人地址" align="center"  width="200">
+       <template slot-scope="{row}">
+         <span>{{ row.get_address}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="收货人详细地址" align="center"  width="200">
+       <template slot-scope="{row}">
+         <span>{{ row.get_detailed_address}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="提交用户" align="center"  width="150">
+       <template slot-scope="{row}">
+         <span>{{ row.user_info.phone}}</span>
        </template>
      </el-table-column>
 
 
-     <el-table-column label="创建时间" align="center">
+     <el-table-column label="创建时间" align="center"  width="180">
        <template slot-scope="{row}">
          <span>{{ row.created_at }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="状态" class-name="status-col" width="70">
-       <template slot-scope="{row}">
-         <el-tag  >
-           {{ row.status == 1 ? '正常':'禁用' }}
-         </el-tag>
-       </template>
-     </el-table-column>
-     <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-       <template slot-scope="{row}">
-        <!--  <el-button v-if="row.status =='2'" size="mini" type="success" @click="handleModifyStatus(row,'已处理')">
-            已处理
-          </el-button> -->
-          <el-button v-if="row.status ==1" size="mini" @click="handleModifyStatus(row,'已处理')">
-            点击禁用
-          </el-button>
-          <el-button v-if="row.status ==2" size="mini" @click="handleModifyStatus(row,'取消禁用')">
-            取消禁用
-          </el-button>
 
+    <el-table-column
+      fixed="right"
+      align="center"
+      label="操作"
+      width="180">
+      <template slot-scope="{row,$index}">
+        <router-link :to="'/order/edit/'+row.id">
+          <el-button type="primary" size="mini" style="margin-right: 10px;">
+            回复订单
+          </el-button>
+        </router-link>
 
-       </template>
-     </el-table-column>
+        <el-button v-if="row.status!='deleted'"  size="mini" type="danger" @click="handleDelete(row,$index)">
+          删除
+        </el-button>
+
+      </template>
+    </el-table-column>
    </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 </div>
 </template>
 
 <script>
-   import { userList , updateUser } from '@/api/app-user'
+   import { orderList , delOrder,updateOrder } from '@/api/order'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -84,7 +136,7 @@
         listQuery: {
           page: 1,
           limit: 20,
-          username: undefined,
+          order_num: undefined,
         },
         temp: {
           id: undefined,
@@ -106,8 +158,8 @@
     methods: {
       getList() {
         this.listLoading = true
-
-        userList(this.listQuery).then(response => {
+        console.log(this.listQuery);
+        orderList(this.listQuery).then(response => {
           this.tableData = response.data.item;
           this.total = response.data.total;
 
@@ -149,7 +201,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delAdmin(index.id).then(response => {
+          delOrder(index.id).then(response => {
           this.$notify({
             message: '删除成功',
             type: 'success',

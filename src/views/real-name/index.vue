@@ -22,56 +22,57 @@
          <span>{{ row.id }}</span>
        </template>
      </el-table-column>
-
      <el-table-column label="姓名" align="center">
        <template slot-scope="{row}">
          <span>{{ row.name }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="手机号码" align="center">
+     <el-table-column label="身份证号" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.phone }}</span>
+         <span>{{ row.id_number }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="邮箱" align="center">
+     <el-table-column label="身份证正面" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.email }}</span>
+         <span>{{ row.id_front}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="团队" align="center">
+    <el-table-column label="身份证背面" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.team }}</span>
+         <span>{{ row.id_reverse_side }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="消息" align="center">
+     <el-table-column label="提交用户" align="center">
        <template slot-scope="{row}">
-                 <el-popover trigger="hover" placement="top">
-                   <p>{{ row.news }}</p>
-                   <div slot="reference" class="name-wrapper">
-                     <el-tag size="medium">{{ row.news }}</el-tag>
-                   </div>
-                 </el-popover>
+         <span>{{ row.user_info.phone }}</span>
        </template>
      </el-table-column>
+     <el-table-column label="创建时间" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.created_at }}</span>
+       </template>
+     </el-table-column>
+
      <el-table-column label="状态" class-name="status-col" width="100">
        <template slot-scope="{row}">
          <el-tag  >
-           {{ row.status == 1 ? '未处理':'已处理' }}
+           {{ row.status == 1 ? '未审核':'审核通过' }}
          </el-tag>
        </template>
      </el-table-column>
      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
-       <template slot-scope="{row,$index}">
+       <template slot-scope="{row}">
         <!--  <el-button v-if="row.status =='2'" size="mini" type="success" @click="handleModifyStatus(row,'已处理')">
             已处理
           </el-button> -->
-          <el-button v-if="row.status ==1" size="mini" @click="handleModifyStatus(row,'已处理')">
-            点击处理
+          <el-button v-if="row.status ==1" size="mini" @click="handleModifyStatus(row,'审核通过')">
+            审核通过
+          </el-button>
+          <el-button v-if="row.status ==2" size="mini" @click="handleModifyStatus(row,'取消审核通过')">
+            取消审核通过
           </el-button>
 
-         <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-           删除
-         </el-button>
+
        </template>
      </el-table-column>
    </el-table>
@@ -81,7 +82,7 @@
 </template>
 
 <script>
-   import { contactList , delContact , updateContact} from '@/api/contact'
+   import { realNameList, updateRealName} from '@/api/real-name'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -121,11 +122,10 @@
     methods: {
       getList() {
         this.listLoading = true
-        contactList(this.listQuery).then(response => {
+        realNameList(this.listQuery).then(response => {
           this.tableData = response.data.item;
           this.total = response.data.total;
-
-          // Just to simulate the time of the request
+          console.log(response);
           setTimeout(() => {
             this.listLoading = false
           }, 500)
@@ -138,38 +138,14 @@
 
       handleModifyStatus(row, status) {
         console.log(row);
-        updateContact(row.id).then(response => {
+        updateRealName(row.id,row.status).then(response => {
           this.$message({
             message: '操作成功',
             type: 'success'
           })
-          row.status = 2
+          row.status = row.status==1?2:1
         })
-
       },
-
-      handleDelete(index, row) {
-        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          delContact(index.id).then(response => {
-          this.$notify({
-            message: '删除成功',
-            type: 'success',
-            duration: 3000
-          })
-          this.tableData.splice(row, 1)
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
-
-      }
     }
   }
 </script>

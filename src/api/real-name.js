@@ -1,18 +1,18 @@
 import request from '@/utils/request'
 
 
-export function positionList(listQuery) {
+export function realNameList(listQuery) {
   return request({
-    url: '/position',
+    url: '/real-name',
     method: 'get',
     params: listQuery
   })
 }
 
 
-export function updatePosition(id,status) {
+export function updateRealName(id,status) {
   return request({
-    url: '/position/'+id,
+    url: '/real-name/'+id,
     method: 'patch',
     params:{
       status:status

@@ -1,14 +1,8 @@
 <template>
  <div class="app-container">
       <div class="filter-container">
-         <el-input v-model="listQuery.title" placeholder="标题" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-         <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px;" icon="el-icon-search" @click="handleFilter">
-           搜索
-         </el-button>
-
-
-         <router-link :to="{name:'CreateConsult'}">
-          <el-button type="primary"  style="margin-left: 10px;"  plain>添加参考</el-button>
+         <router-link :to="{name:'CreateGoodsType'}">
+          <el-button type="primary"  style="margin-left: 10px;"  plain>添加后台帐号</el-button>
           </router-link>
 
       </div>
@@ -28,14 +22,19 @@
        </template>
      </el-table-column>
 
-     <el-table-column label="标题" align="center">
+     <el-table-column label="用户名" align="center">
        <template slot-scope="{row}">
          <span>{{ row.title}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="所属分类" align="center">
+     <el-table-column label="姓名" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.consult_type.title}}</span>
+         <span>{{ row.name}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="手机号" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.phone}}</span>
        </template>
      </el-table-column>
      <el-table-column label="创建时间" align="center">
@@ -45,11 +44,6 @@
      </el-table-column>
      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
        <template slot-scope="{row,$index}">
-         <router-link :to="'/consult/edit/'+row.id">
-           <el-button type="primary" size="mini" style="margin-right: 5px;">
-             编辑
-           </el-button>
-         </router-link>
 
          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
            删除
@@ -62,7 +56,7 @@
 </template>
 
 <script>
-   import { consultList , delConsult , updateAccount} from '@/api/consult'
+   import { goodsTypeList } from '@/api/goods-type'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -77,7 +71,7 @@
         listQuery: {
           page: 1,
           limit: 20,
-          title: undefined,
+          username: undefined,
         },
         temp: {
           id: undefined,
@@ -99,8 +93,8 @@
     methods: {
       getList() {
         this.listLoading = true
-        console.log(this.listQuery)
-        consultList(this.listQuery).then(response => { console.log(response)
+
+        goodsTypeList(this.listQuery).then(response => {
           this.tableData = response.data.item;
           this.total = response.data.total;
 
@@ -114,7 +108,7 @@
         this.listQuery.page = 1
         this.getList()
       },
-      handleUpdate(row) { console.log(row)
+      handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
@@ -122,48 +116,9 @@
           this.$refs['dataForm'].clearValidate()
         })
       },
-      updateData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.temp)
-          updateAccount(tempData.id,tempData).then(() => {
-            const index = this.tableData.findIndex(v => v.id === this.temp.id)
-            this.tableData.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '提示',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-          }
-        })
-      },
 
-      handleDelete(index, row) {
-        console.log(index, row);
-        this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          delConsult(index.id).then(response => {
-          this.$notify({
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.tableData.splice(row, 1)
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
 
-      }
+
     }
   }
 </script>

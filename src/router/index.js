@@ -55,50 +55,7 @@ export const constantRoutes = [
     }]
   },
 
-  {
-    path: '/agreement',
-    component: Layout,
-    redirect: '/agreement/create',
-    name: 'Agreement',
-    meta: { title: '用户协议', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'create',
-        name: 'CreateAgreement',
-        component: () => import('@/views/agreement/create'),
-        meta: { title: '添加协议', icon: 'tree' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        name: 'AgreementList',
-        component: () => import('@/views/agreement/list'),
-        meta: { title: '协议列表', icon: 'table' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/agreement/edit'),
-        name: 'EditAgreement',
-        meta: { title: '编辑协议', noCache: true, activeMenu: '/agreement/list' },
-        hidden: true
-      },
-    ]
-  },
 
-  
-
-  {
-    path: '/contact',
-    component: Layout,
-    children: [
-      {
-        path: 'contact',
-        name: 'Contact',
-        component: () => import('@/views/contact/index'),
-        meta: { title: '联系我们', icon: 'el-icon-phone' }
-      }
-    ]
-  },
 
   {
     path: '/admin',
@@ -143,56 +100,18 @@ export const constantRoutes = [
   },
 
   {
-    path: '/team',
+    path: '/real-name',
     component: Layout,
     children: [
       {
         path: 'list',
-        name: 'Team',
-        component: () => import('@/views/team/index'),
-        meta: { title: '组织团队', icon: 'el-icon-s-grid' }
+        name: 'RealNameList',
+        component: () => import('@/views/real-name/index'),
+        meta: { title: '实名认证', icon: 'el-icon-s-grid' }
       }
     ]
   },
 
-  {
-    path: '/position',
-    component: Layout,
-    children: [
-      {
-        path: 'list',
-        name: 'Position',
-        component: () => import('@/views/position/index'),
-        meta: { title: '位置列表', icon: 'el-icon-map-location' }
-      }
-    ]
-  },
-
-  {
-    path: '/notepad',
-    component: Layout,
-    children: [
-      {
-        path: 'list',
-        name: 'Notepad',
-        component: () => import('@/views/notepad/index'),
-        meta: { title: '记事本', icon: 'el-icon-wallet' }
-      }
-    ]
-  },
-
-  {
-    path: '/triage',
-    component: Layout,
-    children: [
-      {
-        path: 'list',
-        name: 'Triage',
-        component: () => import('@/views/triage/index'),
-        meta: { title: '检伤分类', icon: 'el-icon-plus' }
-      }
-    ]
-  },
 
   {
     path: '/user-guide',
@@ -202,34 +121,54 @@ export const constantRoutes = [
         path: 'content',
         name: 'UserGuide',
         component: () => import('@/views/user-guide/index'),
-        meta: { title: '用户指南', icon: 'el-icon-male' }
+        meta: { title: '服务协议', icon: 'el-icon-male' }
       }
     ]
   },
 
 
   {
-    path: '/tab',
+    path: '/order',
     component: Layout,
     children: [
       {
         path: 'list',
-        name: 'TabList',
-        component: () => import('@/views/tab/index'),
-        meta: { title: '标记', icon: 'table' },
+        name: 'OrderList',
+        component: () => import('@/views/order/index'),
+        meta: { title: '订单列表', icon: 'table' },
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/order/edit'),
+        name: 'EditOrder',
+        meta: { title: '回复订单', noCache: true, activeMenu: '/order/index' },
         hidden: true
+      },
+    ]
+  },
+
+  {
+    path: '/goods-type',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'GoodsTypeList',
+        component: () => import('@/views/goods-type/index'),
+        meta: { title: '物品类型', icon: 'table' },
       },
       {
         path: 'create',
-        name: 'CreateTab',
-        component: () => import('@/views/tab/create'),
+        name: 'CreateGoodsType',
+        component: () => import('@/views/goods-type/create'),
+        meta: { title: '添加物品类型', icon: 'tree' },
         hidden: true
       },
       {
         path: 'edit/:id(\\d+)',
-        component: () => import('@/views/tab/edit'),
-        name: 'EditTab',
-        meta: { title: '编辑标记', noCache: true, activeMenu: '/tab/index' },
+        component: () => import('@/views/goods-type/edit'),
+        name: 'EditGoodsType',
+        meta: { title: '编辑物品类型', noCache: true, activeMenu: '/goods-type/index' },
         hidden: true
       },
     ]
