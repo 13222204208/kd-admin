@@ -30,3 +30,11 @@ export function updateOrder(id, params) {
     params:params
   })
 }
+
+export function changeOrder(id, params) {
+  return request({
+    url: '/change-order/'+id,
+    method: 'post',
+    params:params
+  })
+}

@@ -107,7 +107,7 @@ export const constantRoutes = [
         path: 'list',
         name: 'RealNameList',
         component: () => import('@/views/real-name/index'),
-        meta: { title: '实名认证', icon: 'el-icon-s-grid' }
+        meta: { title: '实名认证', icon: 'el-icon-tickets' }
       }
     ]
   },
@@ -155,7 +155,7 @@ export const constantRoutes = [
         path: 'list',
         name: 'GoodsTypeList',
         component: () => import('@/views/goods-type/index'),
-        meta: { title: '物品类型', icon: 'table' },
+        meta: { title: '物品类型', icon: 'el-icon-s-goods' },
       },
       {
         path: 'create',

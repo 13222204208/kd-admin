@@ -38,6 +38,23 @@
          <span>{{ row.reply}}</span>
        </template>
      </el-table-column>
+     <el-table-column label="物品类型" align="center"  width="150">
+       <template slot-scope="{row}">
+         <span>{{ row.goods_name}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="劳务费" align="center"  width="100">
+       <template slot-scope="{row}">
+         <span>{{ row.cost +'元'}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="是否付款" class-name="status-col" width="100">
+       <template slot-scope="{row}">
+         <el-tag  >
+           {{ row.status == 1 ? '未付款':'已付款' }}
+         </el-tag>
+       </template>
+     </el-table-column>
      <el-table-column label="发货人" align="center"  width="120">
        <template slot-scope="{row}">
          <span>{{ row.send_name}}</span>
@@ -56,11 +73,6 @@
      <el-table-column label="发货人详细地址" align="center"  width="200">
        <template slot-scope="{row}">
          <span>{{ row.send_detailed_address}}</span>
-       </template>
-     </el-table-column>
-     <el-table-column label="劳务费" align="center"  width="100">
-       <template slot-scope="{row}">
-         <span>{{ row.cost +'元'}}</span>
        </template>
      </el-table-column>
 
@@ -101,13 +113,19 @@
       fixed="right"
       align="center"
       label="操作"
-      width="180">
+      width="280">
       <template slot-scope="{row,$index}">
         <router-link :to="'/order/edit/'+row.id">
           <el-button type="primary" size="mini" style="margin-right: 10px;">
             回复订单
           </el-button>
         </router-link>
+          <el-button v-if="row.status ==1" size="mini" @click="handleOrderStatus(row,'2')">
+            点击付款
+          </el-button>
+          <el-button v-if="row.status ==2" size="mini" @click="handleOrderStatus(row,'1')">
+            取消付款
+          </el-button>
 
         <el-button v-if="row.status!='deleted'"  size="mini" type="danger" @click="handleDelete(row,$index)">
           删除
@@ -121,7 +139,7 @@
 </template>
 
 <script>
-   import { orderList , delOrder,updateOrder } from '@/api/order'
+   import { orderList , delOrder,updateOrder, changeOrder } from '@/api/order'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -159,7 +177,7 @@
       getList() {
         this.listLoading = true
         console.log(this.listQuery);
-        orderList(this.listQuery).then(response => {
+        orderList(this.listQuery).then(response => { console.log(response);
           this.tableData = response.data.item;
           this.total = response.data.total;
 
@@ -183,9 +201,9 @@
       },
 
 
-      handleModifyStatus(row, status) {
-        console.log(row);
-        updateUser(row.id,row.status).then(response => {
+      handleOrderStatus(row, status) {
+
+        changeOrder(row.id,row).then(response => {
           this.$message({
             message: '操作成功',
             type: 'success'

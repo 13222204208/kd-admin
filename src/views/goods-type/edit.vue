@@ -1,16 +1,9 @@
 <template>
    <div class="app-container">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-		<el-form-item label="旧密码" prop="oldPassword">
-		  <el-input type="password" v-model="ruleForm.oldPassword" autocomplete="off"></el-input>
+		<el-form-item label="类型名称" prop="title">
+		  <el-input  v-model="ruleForm.title" ></el-input>
 		</el-form-item>
-        <el-form-item label="新密码" prop="password">
-          <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkPassword">
-          <el-input type="password" v-model="ruleForm.checkPassword" autocomplete="off"></el-input>
-        </el-form-item>
-
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -20,58 +13,47 @@
   </div>
 </template>
 <script>
-  import { updateAdmin } from '@/api/admin'
+  import { updateGoodsType, editGoodsType } from '@/api/goods-type'
   export default {
     data() {
 
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPassword !== '') {
-            this.$refs.ruleForm.validateField('checkPassword');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.password) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
       return {
         ruleForm: {
-          password: '',
-          checkPassword: '',
-          oldPassword: '',
+          id:'',
+          title: '',
         },
         rules: {
-          password: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPassword: [
-            { validator: validatePass2, trigger: 'blur' }
-          ],
-          oldPassword: [
-            { required: true, message: '请输入旧密码', trigger: 'blur' },
-            { min: 6, max: 25, message: '长度在 6 到 40 个字符', trigger: 'blur' }
+          title: [
+            { required: true, message: '请输入类型名称', trigger: 'blur' },
+            { min: 2, max: 10, message: '长度在 2到 10 个字符', trigger: 'blur' }
           ],
 
         }
       };
     },
+
+    created() {
+      const id = this.$route.params && this.$route.params.id
+      this.fetchData(id)
+    },
+
     methods: {
+      fetchData(id) {
+        editGoodsType(id).then(response => {
+          this.ruleForm.id = response.data.id;
+          this.ruleForm.title = response.data.title;
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
 
-            updateAdmin(this.ruleForm).then(response => {
+            updateGoodsType(this.ruleForm.id,this.ruleForm).then(response => {
                 this.$message({
-                  message: '密码更新成功',
+                  message: '更新成功',
                   type: 'success'
                 })
                     this.$router.go(-1);

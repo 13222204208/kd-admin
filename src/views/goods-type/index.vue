@@ -2,7 +2,7 @@
  <div class="app-container">
       <div class="filter-container">
          <router-link :to="{name:'CreateGoodsType'}">
-          <el-button type="primary"  style="margin-left: 10px;"  plain>添加后台帐号</el-button>
+          <el-button type="primary"  style="margin-left: 10px;"  plain>添加物品类型</el-button>
           </router-link>
 
       </div>
@@ -22,19 +22,9 @@
        </template>
      </el-table-column>
 
-     <el-table-column label="用户名" align="center">
+     <el-table-column label="物品类型名称" align="center">
        <template slot-scope="{row}">
          <span>{{ row.title}}</span>
-       </template>
-     </el-table-column>
-     <el-table-column label="姓名" align="center">
-       <template slot-scope="{row}">
-         <span>{{ row.name}}</span>
-       </template>
-     </el-table-column>
-     <el-table-column label="手机号" align="center">
-       <template slot-scope="{row}">
-         <span>{{ row.phone}}</span>
        </template>
      </el-table-column>
      <el-table-column label="创建时间" align="center">
@@ -42,21 +32,45 @@
          <span>{{ row.created_at }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
-       <template slot-scope="{row,$index}">
-
-         <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-           删除
-         </el-button>
+     <el-table-column label="更新时间" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.updated_at }}</span>
        </template>
      </el-table-column>
+     <el-table-column label="状态"  align="center" class-name="status-col" width="100">
+       <template slot-scope="{row}">
+         <el-tag  >
+           {{ row.status == 1 ? '正常':'已禁用' }}
+         </el-tag>
+       </template>
+     </el-table-column>
+    <el-table-column
+      fixed="right"
+      align="center"
+      label="操作"
+      width="180">
+      <template slot-scope="{row,$index}">
+        <router-link :to="'/goods-type/edit/'+row.id">
+          <el-button type="primary" size="mini" style="margin-right: 10px;">
+            编辑
+          </el-button>
+        </router-link>
+          <el-button v-if="row.status ==1" size="mini" @click="handleModifyStatus(row,'0')">
+            点击禁用
+          </el-button>
+          <el-button v-if="row.status ==0" size="mini" @click="handleModifyStatus(row,'1')">
+            恢复正常
+          </el-button>
+
+      </template>
+    </el-table-column>
    </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 </div>
 </template>
 
 <script>
-   import { goodsTypeList } from '@/api/goods-type'
+   import { goodsTypeList, changeGoodsType } from '@/api/goods-type'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -117,7 +131,17 @@
         })
       },
 
-
+      handleModifyStatus(row, status) {
+        this.listLoading = true
+        changeGoodsType(row.id,row).then(response => {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          row.status = row.status==1?0:1
+          this.listLoading = false
+        })
+      },
 
     }
   }

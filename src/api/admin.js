@@ -1,31 +1,31 @@
 import request from '@/utils/request'
 
-export function storeGoodsType(params) {
+export function storeAdmin(params) {
   return request({
-    url: '/goods-type',
+    url: '/admin',
     method: 'post',
     params: params
   })
 }
 
-export function goodsTypeList(listQuery) {
+export function adminList(listQuery) {
   return request({
-    url: '/goods-type',
+    url: '/admin',
     method: 'get',
     params: listQuery
   })
 }
 
-export function delgoodsType(id) {
+export function delAdmin(id) {
   return request({
-    url: '/goods-type/'+id,
+    url: '/admin/'+id,
     method: 'delete'
   })
 }
 
-export function updateGoodsType(params) {
+export function updateAdmin(params) {
   return request({
-    url: '/goods-type/1',//1只为替代，没有作用
+    url: '/admin/1',//1只为替代，没有作用
     method: 'patch',
     params:params
   })

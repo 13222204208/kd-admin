@@ -32,16 +32,6 @@
          <span>{{ row.id_number }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="身份证正面" align="center">
-       <template slot-scope="{row}">
-         <span>{{ row.id_front}}</span>
-       </template>
-     </el-table-column>
-    <el-table-column label="身份证背面" align="center">
-       <template slot-scope="{row}">
-         <span>{{ row.id_reverse_side }}</span>
-       </template>
-     </el-table-column>
      <el-table-column label="提交用户" align="center">
        <template slot-scope="{row}">
          <span>{{ row.user_info.phone }}</span>
@@ -53,7 +43,7 @@
        </template>
      </el-table-column>
 
-     <el-table-column label="状态" class-name="status-col" width="100">
+     <el-table-column label="状态" class-name="status-col" align="center" width="100">
        <template slot-scope="{row}">
          <el-tag  >
            {{ row.status == 1 ? '未审核':'审核通过' }}
@@ -62,9 +52,10 @@
      </el-table-column>
      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
        <template slot-scope="{row}">
-        <!--  <el-button v-if="row.status =='2'" size="mini" type="success" @click="handleModifyStatus(row,'已处理')">
-            已处理
-          </el-button> -->
+          <el-button  size="mini" @click="open(row)">
+            查看身份证
+          </el-button>
+
           <el-button v-if="row.status ==1" size="mini" @click="handleModifyStatus(row,'审核通过')">
             审核通过
           </el-button>
@@ -137,7 +128,7 @@
       },
 
       handleModifyStatus(row, status) {
-        console.log(row);
+
         updateRealName(row.id,row.status).then(response => {
           this.$message({
             message: '操作成功',
@@ -146,6 +137,16 @@
           row.status = row.status==1?2:1
         })
       },
+
+      open(row) {
+         console.log(row);
+         var str=process.env.VUE_APP_BASE_API;
+          var  leg= str.indexOf('api');
+            var url= str.substr(0,leg);
+        this.$alert('<img  src='+url+'/'+row.id_front+'  width="380" ><br><img  src='+url+'/'+row.id_reverse_side+'  width="380" >', '身份证正反面', {
+          dangerouslyUseHTMLString: true
+           });
+      }
     }
   }
 </script>
